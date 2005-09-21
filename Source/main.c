@@ -3,7 +3,7 @@
 //  Darcs Importer
 //
 //  Created by Jonathon Mah on 2005-09-22.
-//  Copyright (c) 2005 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2005 Playhaus. All rights reserved.
 //
 
 
