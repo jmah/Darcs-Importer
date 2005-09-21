@@ -1,0 +1,35 @@
+--------------------------------------------------------------------------------
+                        Darcs Importer 1.0 (prerelease)
+                           Copyright 2005, Playhaus
+                      Born on 2005-09-22 to Jonathon Mah
+--------------------------------------------------------------------------------
+
+The Darcs Importer uses a combination of two methods (both deprecated) to make
+darcs repositories importable. Firstly, a _darcs/Contents/PkgInfo file is added
+to the repo. This is an 8-byte file that contains a Mac OS type code and creator
+code, in that order. The type code chosen to represent a darcs repository is
+'DRep', and this is reflected in the importer's Info.plist file. The PkgInfo
+file was deprecated in Mac OS X 10.2.
+
+Secondly, the HFS Bundle Bit is set on the _darcs directory to make it appear as
+a package to some tools. The Bundle Bit flag applied on folders was never
+sanctioned, but used unoficially on Mac OS 9 (this needs checking). These
+unconventional approaches are needed because the standard way of creating
+packages requires the use of file extensions, and it would be nice if the darcs
+code didn't have to be changed (to reference, say, "_repo.darcs" instead of
+"_darcs").
+
+The 'make_importable.sh' script makes these two changes automatically, given the
+path to a _darcs directory.
+
+The combination of these two modifications makes Spotlight see the _darcs
+directory both as a single entity, and as a standard directory. That is, the
+Darcs importer will run on the _darcs directory as if it were a package, picking
+out the patch logs and authors. Each individual file will also be imported too,
+such as files in the pristine tree. The latter is probably not completely
+desirable, though.
+
+When a change is made to a repository (e.g. after running 'darcs record'), it is
+not automatically picked up by Spotlight. Instead, use the command:
+    darcs record --posthook=mdimport\ _darcs --run-posthook
+This will tell Spotlight to re-import the repository after a record.
