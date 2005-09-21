@@ -45,6 +45,7 @@
 		28DDBD5508E1E173009A5773 /* en */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		28DDBD6308E1E1EB009A5773 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		28DDBD7208E1E323009A5773 /* list_history.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = list_history.rb; sourceTree = "<group>"; };
+		28DDBDF808E200ED009A5773 /* make_importable.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = make_importable.sh; sourceTree = "<group>"; };
 		2C05A19B06CAA52B00D84F6F /* GetMetadataForFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GetMetadataForFile.m; sourceTree = "<group>"; };
 		8D576316048677EA00EA77CD /* Darcs.mdimporter */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Darcs.mdimporter; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D576317048677EA00EA77CD /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; languageSpecificationIdentifier = html; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -68,6 +69,7 @@
 		089C166AFE841209C02AAC07 /* Darcs Importer */ = {
 			isa = PBXGroup;
 			children = (
+				28DDBDF808E200ED009A5773 /* make_importable.sh */,
 				08FB77AFFE84173DC02AAC07 /* Source */,
 				089C167CFE841241C02AAC07 /* Resources */,
 				089C1671FE841209C02AAC07 /* External Frameworks and Libraries */,
