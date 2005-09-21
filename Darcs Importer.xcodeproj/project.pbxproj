@@ -246,7 +246,7 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		28DDBD4608E1E023009A5773 /* Development */ = {
+		28DDBD4608E1E023009A5773 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -281,9 +281,9 @@
 				WRAPPER_EXTENSION = mdimporter;
 				ZERO_LINK = NO;
 			};
-			name = Development;
+			name = Debug;
 		};
-		28DDBD4708E1E023009A5773 /* Deployment */ = {
+		28DDBD4708E1E023009A5773 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
@@ -314,7 +314,7 @@
 				WRAPPER_EXTENSION = mdimporter;
 				ZERO_LINK = NO;
 			};
-			name = Deployment;
+			name = Release;
 		};
 		28DDBD4808E1E023009A5773 /* Default */ = {
 			isa = XCBuildConfiguration;
@@ -347,7 +347,7 @@
 			};
 			name = Default;
 		};
-		28DDBD4A08E1E023009A5773 /* Development */ = {
+		28DDBD4A08E1E023009A5773 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = (
@@ -357,9 +357,9 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
-			name = Development;
+			name = Debug;
 		};
-		28DDBD4B08E1E023009A5773 /* Deployment */ = {
+		28DDBD4B08E1E023009A5773 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = (
@@ -369,7 +369,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
-			name = Deployment;
+			name = Release;
 		};
 		28DDBD4C08E1E023009A5773 /* Default */ = {
 			isa = XCBuildConfiguration;
@@ -389,8 +389,8 @@
 		28DDBD4508E1E023009A5773 /* Build configuration list for PBXNativeTarget "Darcs Importer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				28DDBD4608E1E023009A5773 /* Development */,
-				28DDBD4708E1E023009A5773 /* Deployment */,
+				28DDBD4608E1E023009A5773 /* Debug */,
+				28DDBD4708E1E023009A5773 /* Release */,
 				28DDBD4808E1E023009A5773 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -399,8 +399,8 @@
 		28DDBD4908E1E023009A5773 /* Build configuration list for PBXProject "Darcs Importer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				28DDBD4A08E1E023009A5773 /* Development */,
-				28DDBD4B08E1E023009A5773 /* Deployment */,
+				28DDBD4A08E1E023009A5773 /* Debug */,
+				28DDBD4B08E1E023009A5773 /* Release */,
 				28DDBD4C08E1E023009A5773 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
