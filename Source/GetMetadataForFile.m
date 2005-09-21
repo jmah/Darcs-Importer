@@ -61,10 +61,14 @@ Boolean GetMetadataForFile(void* thisInterface,
 			          forKey:(NSString *)kMDItemDisplayName];
 			if (![latestModificationDate isEqualToString:@"00000000000000"])
 			{
-				NSDate *lastChangeDate = [NSCalendarDate dateWithString:latestModificationDate calendarFormat:@"%Y%m%d%H%M%S"];
-				[attrs setObject:lastChangeDate
+				NSCalendarDate *lastChangeDate = [NSCalendarDate dateWithString:latestModificationDate calendarFormat:@"%Y%m%d%H%M%S"];
+				[lastChangeDate setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
+				NSCalendarDate *localDate = [lastChangeDate addTimeInterval:[[NSTimeZone localTimeZone] secondsFromGMTForDate:lastChangeDate]];
+				[localDate setTimeZone:[NSTimeZone localTimeZone]];
+				
+				[attrs setObject:localDate
 				          forKey:(NSString *)kMDItemContentModificationDate];
-				[attrs setObject:lastChangeDate
+				[attrs setObject:localDate
 				          forKey:(NSString *)kMDItemLastUsedDate];
 			}
 			
