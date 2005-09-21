@@ -90,9 +90,6 @@ void DImp_ProcessInventoryFile(NSString *path, NSMutableString *log, NSMutableSe
 			NSString *currLine;
 			while (currLine = [linesEnum nextObject])
 			{
-				if ([currLine length] == 0)
-					continue;
-				
 				if (authorIsNext)
 				{
 					authorIsNext = NO;
@@ -110,7 +107,10 @@ void DImp_ProcessInventoryFile(NSString *path, NSMutableString *log, NSMutableSe
 					if ([scanner scanUpToString:@"**" intoString:&author])
 						[authors addObject:author];
 					
-					// Get rid of timestamp
+					// Get rid of "**"
+					[scanner scanString:@"**" intoString:nil];
+					
+					// Scan of timestamp
 					NSString *modDate;
 					if ([scanner scanCharactersFromSet:[NSCharacterSet decimalDigitCharacterSet] intoString:&modDate])
 					{
@@ -121,12 +121,11 @@ void DImp_ProcessInventoryFile(NSString *path, NSMutableString *log, NSMutableSe
 					// Get rid of closing bracket and space, if any
 					[scanner scanString:@"] " intoString:nil];
 					
-					if (![scanner isAtEnd])
-						// Put the rest of the line back into currLine
-						currLine = [currLine substringFromIndex:[scanner scanLocation]];
+					// Put the rest of the line back into currLine
+					currLine = [currLine substringFromIndex:[scanner scanLocation]];
 				}
 				
-				if ([currLine characterAtIndex:0] == '[')
+				if ([currLine length] > 0 && [currLine characterAtIndex:0] == '[')
 				{
 					authorIsNext = YES;
 					currLine = [currLine substringFromIndex:1];
