@@ -4,20 +4,20 @@
 
 
 /* -----------------------------------------------------------------------------
-    Get metadata attributes from file
+   Get metadata attributes from file
    
    This function's job is to extract useful information your file format supports
    and return it as a dictionary
 ----------------------------------------------------------------------------- */
 
 
-void DImp_ProcessInventoryFile(NSString *path, NSMutableString *log, NSMutableSet *authors);
+void DImp_ProcessInventoryFile(NSString *path, NSMutableString *log, NSMutableSet *authors, NSString **latestModDate);
 
 
-Boolean GetMetadataForFile(void* thisInterface, 
-			   CFMutableDictionaryRef attributes, 
-			   CFStringRef contentTypeUTI,
-			   CFStringRef pathToFile)
+Boolean GetMetadataForFile(void* thisInterface,
+                           CFMutableDictionaryRef attributes,
+                           CFStringRef contentTypeUTI,
+                           CFStringRef pathToFile)
 {
     /* Pull any available metadata from the file at the specified path */
     /* Return the attribute keys and attribute values in the dict */
@@ -38,9 +38,10 @@ Boolean GetMetadataForFile(void* thisInterface,
 			NSMutableDictionary *attrs = (NSMutableDictionary *)attributes;
 			NSMutableString *log = [[NSMutableString alloc] init];
 			NSMutableSet *authors = [[NSMutableSet alloc] init];
+			NSString *latestModificationDate = @"00000000000000"; // A string that all date codes will be greater than
 			
 			// Process top-level 'inventory' file
-			DImp_ProcessInventoryFile([rootPath stringByAppendingPathComponent:@"inventory"], log, authors);
+			DImp_ProcessInventoryFile([rootPath stringByAppendingPathComponent:@"inventory"], log, authors, &latestModificationDate);
 			
 			// Process files in 'inventories' directory
 			NSArray *invFiles = [[NSFileManager defaultManager] directoryContentsAtPath:[rootPath stringByAppendingPathComponent:@"inventories"]];
@@ -48,10 +49,19 @@ Boolean GetMetadataForFile(void* thisInterface,
 			NSString *currInvFile;
 			while (currInvFile = [invFilesEnum nextObject])
 				if ([[currInvFile pathExtension] isEqualToString:@"gz"])
-					DImp_ProcessInventoryFile(currInvFile, log, authors);
+					DImp_ProcessInventoryFile(currInvFile, log, authors, &latestModificationDate);
 			
-			[attrs setObject:log forKey:(NSString *)kMDItemTextContent];
-			[attrs setObject:[authors allObjects] forKey:(NSString *)kMDItemAuthors];
+			NSString *displayName = [NSString stringWithFormat:@"%@ (Darcs)", [rootPathComponents objectAtIndex:([rootPathComponents count] - 2u)]];
+			
+			[attrs setObject:log
+			          forKey:(NSString *)kMDItemTextContent];
+			[attrs setObject:[authors allObjects]
+			          forKey:(NSString *)kMDItemAuthors];
+			[attrs setObject:displayName
+			          forKey:(NSString *)kMDItemDisplayName];
+			if (![latestModificationDate isEqualToString:@"00000000000000"])
+				[attrs setObject:[NSCalendarDate dateWithString:latestModificationDate calendarFormat:@"%Y%m%d%H%M%S"]
+				          forKey:(NSString *)kMDItemContentModificationDate];
 			
 			[log release];
 			[authors release];
@@ -65,13 +75,13 @@ Boolean GetMetadataForFile(void* thisInterface,
 }
 
 
-void DImp_ProcessInventoryFile(NSString *path, NSMutableString *log, NSMutableSet *authors)
+void DImp_ProcessInventoryFile(NSString *path, NSMutableString *log, NSMutableSet *authors, NSString **latestModDate)
 {
 	if ([[NSFileManager defaultManager] isReadableFileAtPath:path])
 	{
 		NSString *inventory = [NSString stringWithContentsOfFile:path
-														encoding:NSUTF8StringEncoding
-														   error:nil];
+		                                                encoding:NSUTF8StringEncoding
+		                                                   error:nil];
 		if (inventory)
 		{
 			BOOL authorIsNext = NO;
@@ -101,7 +111,12 @@ void DImp_ProcessInventoryFile(NSString *path, NSMutableString *log, NSMutableSe
 						[authors addObject:author];
 					
 					// Get rid of timestamp
-					[scanner scanCharactersFromSet:[NSCharacterSet decimalDigitCharacterSet] intoString:nil];
+					NSString *modDate;
+					if ([scanner scanCharactersFromSet:[NSCharacterSet decimalDigitCharacterSet] intoString:&modDate])
+					{
+						if ([modDate compare:*latestModDate] == NSOrderedDescending)
+							*latestModDate = [NSString stringWithString:modDate];
+					}
 					
 					// Get rid of closing bracket and space, if any
 					[scanner scanString:@"] " intoString:nil];
