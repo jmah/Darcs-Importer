@@ -25,9 +25,10 @@ path to a _darcs directory.
 The combination of these two modifications makes Spotlight see the _darcs
 directory both as a single entity, and as a standard directory. That is, the
 Darcs importer will run on the _darcs directory as if it were a package, picking
-out the patch logs and authors. Each individual file will also be imported too,
-such as files in the pristine tree. The latter is probably not completely
-desirable, though.
+out the patch logs and authors. Some individual files will also be imported too,
+possibly such as files in the pristine tree, or the "checkpoints" directory. I
+haven't determined a pattern for what is imported and what isn't. This is not a
+desirable effect.
 
 When a change is made to a repository (e.g. after running 'darcs record'), it is
 not automatically picked up by Spotlight. Instead, use the command:
