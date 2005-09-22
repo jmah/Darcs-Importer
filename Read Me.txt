@@ -22,6 +22,10 @@ QUICKSTART AND INSTALLATION
 Done!
 
 
+(The unmake_importable.sh script reverts all the changes made by
+make_importable.sh, if you ever so desire.)
+
+
 Unfortunately changes aren't currently picked up automatically. You can get
 around this by adding mdimport as a posthook to the record/pull/etc. commands.
 For example:
