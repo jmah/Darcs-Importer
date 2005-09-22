@@ -10,7 +10,7 @@ QUICKSTART AND INSTALLATION
 1. Put Darcs.mdimporter in /Library/Spotlight/ or ~/Library/Spotlight/
    (depending on whether you want the importer to be available for all users or
    just yourself)
-2. Run the shell-script:
+2. Run the shell script:
    make_importable.sh /path/to/my/_darcs
    This will make the repository appear as a bundle to the system, so it can be
    associated with the Darcs importer.
