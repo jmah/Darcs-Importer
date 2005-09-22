@@ -48,6 +48,9 @@ WHAT IS IMPORTED
 * The date of the most recent patch is set as the content modification date
   (kMDItemContentModificationDate), and also as the last used date
   (kMDItemLastUsedDate)
+* The display name (kMDItemDisplayName) is set to the name of the parent folder
+  and " (Darcs)", so that instead of seeing a bunch of "_darcs" directories in
+  your search results, you see names such as "My Project (Darcs)".
 
 
 HOW IT WORKS
