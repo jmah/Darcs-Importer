@@ -49,8 +49,8 @@ WHAT IS IMPORTED
   (kMDItemContentModificationDate), and also as the last used date
   (kMDItemLastUsedDate)
 * The display name (kMDItemDisplayName) is set to the name of the parent folder
-  and " (Darcs)", so that instead of seeing a bunch of "_darcs" directories in
-  your search results, you see names such as "My Project (Darcs)".
+  and " (darcs)", so that instead of seeing a bunch of "_darcs" directories in
+  your search results, you see names such as "My Project (darcs)".
 
 
 HOW IT WORKS

@@ -89,7 +89,7 @@ Boolean GetMetadataForFile(void* thisInterface,
 			
 			
 			// Set display name
-			NSString *displayName = [NSString stringWithFormat:@"%@ (Darcs)", [rootPathComponents objectAtIndex:([rootPathComponents count] - 2u)]];
+			NSString *displayName = [NSString stringWithFormat:@"%@ (darcs)", [rootPathComponents objectAtIndex:([rootPathComponents count] - 2u)]];
 			
 			// Set attributes
 			[attrs setObject:log
