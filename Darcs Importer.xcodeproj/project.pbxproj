@@ -318,37 +318,6 @@
 			};
 			name = Release;
 		};
-		28DDBD4808E1E023009A5773 /* Default */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
-				GCC_WARN_UNKNOWN_PRAGMAS = NO;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "";
-				INFOPLIST_FILE = Resources/Info.plist;
-				INSTALL_PATH = /Library/Spotlight;
-				LIBRARY_SEARCH_PATHS = "";
-				LIBRARY_STYLE = Bundle;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
-				OTHER_REZFLAGS = "";
-				PREBINDING = NO;
-				PRODUCT_NAME = Darcs;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = (
-					"-Wmost",
-					"-Wno-four-char-constants",
-					"-Wno-unknown-pragmas",
-				);
-				WRAPPER_EXTENSION = mdimporter;
-				ZERO_LINK = NO;
-			};
-			name = Default;
-		};
 		28DDBD4A08E1E023009A5773 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -373,18 +342,6 @@
 			};
 			name = Release;
 		};
-		28DDBD4C08E1E023009A5773 /* Default */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = (
-					ppc,
-					i386,
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.4;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
-			};
-			name = Default;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -393,20 +350,18 @@
 			buildConfigurations = (
 				28DDBD4608E1E023009A5773 /* Debug */,
 				28DDBD4708E1E023009A5773 /* Release */,
-				28DDBD4808E1E023009A5773 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = Debug;
 		};
 		28DDBD4908E1E023009A5773 /* Build configuration list for PBXProject "Darcs Importer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				28DDBD4A08E1E023009A5773 /* Debug */,
 				28DDBD4B08E1E023009A5773 /* Release */,
-				28DDBD4C08E1E023009A5773 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};
