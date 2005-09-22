@@ -21,9 +21,14 @@ QUICKSTART AND INSTALLATION
 Done!
 
 Unfortunately changes aren't currently picked up automatically. You can get
-around this by adding mdimport as a posthook to your record/pull/etc. commands.
+around this by adding mdimport as a posthook to the record/pull/etc. commands.
 For example:
     darcs record --posthook=mdimport\ _darcs --run-posthook
+Or, to your darcs defaults file (~/.darcs/defaults  or  _darcs/prefs/defaults):
+    record  posthook mdimport _darcs
+    pull    posthook mdimport _darcs
+	(etc.)
+	ALL     run-posthook
 
 
 WHAT IS IMPORTED
