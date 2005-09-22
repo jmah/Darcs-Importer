@@ -4,6 +4,50 @@
                       Born on 2005-09-22 to Jonathon Mah
 --------------------------------------------------------------------------------
 
+QUICKSTART AND INSTALLATION
+===========================
+
+1. Put Darcs.mdimporter in /Library/Spotlight/ or ~/Library/Spotlight/
+   (depending on whether you want the importer to be available for all users or
+   just yourself)
+2. Run the shell-script:
+   make_importable.sh /path/to/my/_darcs
+   This will make the repository appear as a bundle to the system, so it can be
+   associated with the Darcs importer.
+3. Run:
+   mdimport /path/to/my/_darcs
+   This will import all the information from the repository.
+
+Done!
+
+Unfortunately changes aren't currently picked up automatically. You can get
+around this by adding mdimport as a posthook to your record/pull/etc. commands.
+For example:
+    darcs record --posthook=mdimport\ _darcs --run-posthook
+
+
+WHAT IS IMPORTED
+================
+
+* The author (_darcs/prefs/author) is put into the "Author" field
+  (kMDItemAuthors)
+* The MOTD file (_darcs/prefs/motd) is put into the "Comments" field
+  (kMDItemComments)
+* The repositories file (_darcs/prefs/repos) is put into the "Where from" array
+  (kMDItemWhereFroms)
+* The log entires are put into the text content (kMDItemTextContent)
+* The patch authors are put into "Contributors" (kMDItemContributors) and
+  "E-mail Addresses" (kMDItemEmailDdresses)
+* The date of the first patch is set as the content creation date
+  (kMDItemContentCreationDate)
+* The date of the most recent patch is set as the content modification date
+  (kMDItemContentModificationDate), and also as the last used date
+  (kMDItemLastUsedDate)
+
+
+HOW IT WORKS
+============
+
 The Darcs Importer uses a combination of two methods (both deprecated) to make
 darcs repositories importable. Firstly, a _darcs/Contents/PkgInfo file is added
 to the repo. This is an 8-byte file that contains a Mac OS type code and creator
