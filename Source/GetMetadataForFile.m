@@ -3,7 +3,7 @@
 #import <Foundation/Foundation.h>
 
 
-void DImp_ProcessInventoryFile(NSString *path, NSMutableString *log, NSMutableSet *authors, NSString **latestModDate);
+void DImp_ProcessInventoryFile(NSString *path, NSMutableString *log, NSMutableSet *authors, NSString **firstRecordDate, NSString **latestRecordDate);
 
 
 /* -----------------------------------------------------------------------------
@@ -40,11 +40,20 @@ Boolean GetMetadataForFile(void* thisInterface,
 			// We're dealing with a _darcs directory; so far so good!
 			NSMutableDictionary *attrs = (NSMutableDictionary *)attributes;
 			NSMutableString *log = [[NSMutableString alloc] init];
-			NSMutableSet *authors = [[NSMutableSet alloc] init];
-			NSString *latestModificationDate = ZERO_MOD_DATE; 
+			NSMutableSet *authors = [[NSMutableSet alloc] init]; // An array of all patch authors
+			NSString *firstRecordDate = ZERO_MOD_DATE;
+			NSString *latestRecordDate = ZERO_MOD_DATE;
+			
+			// Get e-mail address of the current user
+			NSString *thisAuthorEmail = nil;
+			NSString *authorPath = [rootPath stringByAppendingPathComponent:@"prefs/author"];
+			if ([[NSFileManager defaultManager] isReadableFileAtPath:authorPath])
+				thisAuthorEmail = [NSString stringWithContentsOfFile:authorPath
+				                                            encoding:NSUTF8StringEncoding
+				                                               error:NULL];
 			
 			// Process top-level 'inventory' file
-			DImp_ProcessInventoryFile([rootPath stringByAppendingPathComponent:@"inventory"], log, authors, &latestModificationDate);
+			DImp_ProcessInventoryFile([rootPath stringByAppendingPathComponent:@"inventory"], log, authors, &firstRecordDate, &latestRecordDate);
 			
 			// Process files in 'inventories' directory
 			NSArray *invFiles = [[NSFileManager defaultManager] directoryContentsAtPath:[rootPath stringByAppendingPathComponent:@"inventories"]];
@@ -52,7 +61,7 @@ Boolean GetMetadataForFile(void* thisInterface,
 			NSString *currInvFile;
 			while (currInvFile = [invFilesEnum nextObject])
 				if ([[currInvFile pathExtension] isEqualToString:@"gz"])
-					DImp_ProcessInventoryFile(currInvFile, log, authors, &latestModificationDate);
+					DImp_ProcessInventoryFile(currInvFile, log, authors, &firstRecordDate, &latestRecordDate);
 			
 			// Set source location
 			NSMutableArray *sourcePaths = nil;
@@ -70,6 +79,14 @@ Boolean GetMetadataForFile(void* thisInterface,
 				}
 			}
 			
+			// Set MOTD comment
+			NSString *motdComment = nil;
+			NSString *motdPath = [rootPath stringByAppendingPathComponent:@"prefs/motd"];
+			if ([[NSFileManager defaultManager] isReadableFileAtPath:motdPath])
+				motdComment = [NSString stringWithContentsOfFile:motdPath
+				                                        encoding:NSUTF8StringEncoding
+				                                           error:NULL];
+			
 			
 			// Set display name
 			NSString *displayName = [NSString stringWithFormat:@"%@ (Darcs)", [rootPathComponents objectAtIndex:([rootPathComponents count] - 2u)]];
@@ -77,17 +94,36 @@ Boolean GetMetadataForFile(void* thisInterface,
 			// Set attributes
 			[attrs setObject:log
 			          forKey:(NSString *)kMDItemTextContent];
+			if (thisAuthorEmail)
+				[attrs setObject:[NSArray arrayWithObject:thisAuthorEmail]
+				          forKey:(NSString *)kMDItemAuthors];
 			[attrs setObject:[authors allObjects]
-			          forKey:(NSString *)kMDItemAuthors];
+			          forKey:(NSString *)kMDItemContributors];
+			[attrs setObject:[authors allObjects]
+			          forKey:(NSString *)kMDItemEmailAddresses];
 			[attrs setObject:displayName
 			          forKey:(NSString *)kMDItemDisplayName];
 			if (sourcePaths)
 				[attrs setObject:sourcePaths
 				          forKey:(NSString *)kMDItemWhereFroms];
-			if (![latestModificationDate isEqualToString:ZERO_MOD_DATE])
+			if (motdComment)
+				[attrs setObject:motdComment
+						  forKey:(NSString *)kMDItemComment];
+			if (![firstRecordDate isEqualToString:ZERO_MOD_DATE])
+			{
+				// Get date of first record
+				NSCalendarDate *firstRecordCalendarDate = [NSCalendarDate dateWithString:firstRecordDate calendarFormat:@"%Y%m%d%H%M%S"];
+				[firstRecordCalendarDate setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
+				NSCalendarDate *localDate = [firstRecordCalendarDate addTimeInterval:[[NSTimeZone localTimeZone] secondsFromGMTForDate:firstRecordCalendarDate]];
+				[localDate setTimeZone:[NSTimeZone localTimeZone]];
+				
+				[attrs setObject:localDate
+				          forKey:(NSString *)kMDItemContentCreationDate];
+			}
+			if (![latestRecordDate isEqualToString:ZERO_MOD_DATE])
 			{
 				// Get date of last record
-				NSCalendarDate *lastChangeDate = [NSCalendarDate dateWithString:latestModificationDate calendarFormat:@"%Y%m%d%H%M%S"];
+				NSCalendarDate *lastChangeDate = [NSCalendarDate dateWithString:latestRecordDate calendarFormat:@"%Y%m%d%H%M%S"];
 				[lastChangeDate setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
 				NSCalendarDate *localDate = [lastChangeDate addTimeInterval:[[NSTimeZone localTimeZone] secondsFromGMTForDate:lastChangeDate]];
 				[localDate setTimeZone:[NSTimeZone localTimeZone]];
@@ -110,7 +146,7 @@ Boolean GetMetadataForFile(void* thisInterface,
 }
 
 
-void DImp_ProcessInventoryFile(NSString *path, NSMutableString *log, NSMutableSet *authors, NSString **latestModDate)
+void DImp_ProcessInventoryFile(NSString *path, NSMutableString *log, NSMutableSet *authors, NSString **firstRecordDate, NSString **latestRecordDate)
 {
 	if ([[NSFileManager defaultManager] isReadableFileAtPath:path])
 	{
@@ -149,8 +185,12 @@ void DImp_ProcessInventoryFile(NSString *path, NSMutableString *log, NSMutableSe
 					NSString *modDate;
 					if ([scanner scanCharactersFromSet:[NSCharacterSet decimalDigitCharacterSet] intoString:&modDate])
 					{
-						if ([modDate compare:*latestModDate] == NSOrderedDescending)
-							*latestModDate = [NSString stringWithString:modDate];
+						if ([modDate compare:*latestRecordDate] == NSOrderedDescending)
+							*latestRecordDate = [NSString stringWithString:modDate];
+						
+						if ([*firstRecordDate isEqualToString:ZERO_MOD_DATE] ||
+						    [modDate compare:*firstRecordDate] == NSOrderedAscending)
+							*firstRecordDate = [NSString stringWithString:modDate];
 					}
 					
 					// Get rid of closing bracket and space, if any
