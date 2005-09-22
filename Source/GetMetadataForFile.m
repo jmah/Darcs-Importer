@@ -3,27 +3,30 @@
 #import <Foundation/Foundation.h>
 
 
+void DImp_ProcessInventoryFile(NSString *path, NSMutableString *log, NSMutableSet *authors, NSString **latestModDate);
+
+
 /* -----------------------------------------------------------------------------
-   Get metadata attributes from file
-   
-   This function's job is to extract useful information your file format supports
-   and return it as a dictionary
+	Get metadata attributes from file
+	
+	This function's job is to extract useful information your file format supports
+	and return it as a dictionary
 ----------------------------------------------------------------------------- */
 
 
-void DImp_ProcessInventoryFile(NSString *path, NSMutableString *log, NSMutableSet *authors, NSString **latestModDate);
-
+// A string that all date codes will be greater than, YYYYmmddHHMMSS
+#define ZERO_MOD_DATE @"00000000000000"
 
 Boolean GetMetadataForFile(void* thisInterface,
                            CFMutableDictionaryRef attributes,
                            CFStringRef contentTypeUTI,
                            CFStringRef pathToFile)
 {
-    /* Pull any available metadata from the file at the specified path */
-    /* Return the attribute keys and attribute values in the dict */
-    /* Return TRUE if successful, FALSE if there was no data provided */
-    
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+	/* Pull any available metadata from the file at the specified path */
+	/* Return the attribute keys and attribute values in the dict */
+	/* Return TRUE if successful, FALSE if there was no data provided */
+	
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	Boolean success = FALSE;
 	
 	// Basic checking
@@ -34,11 +37,11 @@ Boolean GetMetadataForFile(void* thisInterface,
 		
 		if ([[rootPathComponents lastObject] isEqualToString:@"_darcs"])
 		{
-			// We're dealing with a _darcs directory, so far so good!
+			// We're dealing with a _darcs directory; so far so good!
 			NSMutableDictionary *attrs = (NSMutableDictionary *)attributes;
 			NSMutableString *log = [[NSMutableString alloc] init];
 			NSMutableSet *authors = [[NSMutableSet alloc] init];
-			NSString *latestModificationDate = @"00000000000000"; // A string that all date codes will be greater than
+			NSString *latestModificationDate = ZERO_MOD_DATE; 
 			
 			// Process top-level 'inventory' file
 			DImp_ProcessInventoryFile([rootPath stringByAppendingPathComponent:@"inventory"], log, authors, &latestModificationDate);
@@ -51,16 +54,39 @@ Boolean GetMetadataForFile(void* thisInterface,
 				if ([[currInvFile pathExtension] isEqualToString:@"gz"])
 					DImp_ProcessInventoryFile(currInvFile, log, authors, &latestModificationDate);
 			
+			// Set source location
+			NSMutableArray *sourcePaths = nil;
+			NSString *reposPath = [rootPath stringByAppendingPathComponent:@"prefs/repos"];
+			if ([[NSFileManager defaultManager] isReadableFileAtPath:reposPath])
+			{
+				NSString *reposContents = [NSString stringWithContentsOfFile:reposPath
+				                                                    encoding:NSUTF8StringEncoding
+				                                                       error:NULL];
+				if (reposContents)
+				{
+					sourcePaths = [NSMutableArray arrayWithArray:[reposContents componentsSeparatedByString:@"\n"]];
+					if ([[sourcePaths lastObject] isEqualToString:@""])
+						[sourcePaths removeLastObject];
+				}
+			}
+			
+			
+			// Set display name
 			NSString *displayName = [NSString stringWithFormat:@"%@ (Darcs)", [rootPathComponents objectAtIndex:([rootPathComponents count] - 2u)]];
 			
+			// Set attributes
 			[attrs setObject:log
 			          forKey:(NSString *)kMDItemTextContent];
 			[attrs setObject:[authors allObjects]
 			          forKey:(NSString *)kMDItemAuthors];
 			[attrs setObject:displayName
 			          forKey:(NSString *)kMDItemDisplayName];
-			if (![latestModificationDate isEqualToString:@"00000000000000"])
+			if (sourcePaths)
+				[attrs setObject:sourcePaths
+				          forKey:(NSString *)kMDItemWhereFroms];
+			if (![latestModificationDate isEqualToString:ZERO_MOD_DATE])
 			{
+				// Get date of last record
 				NSCalendarDate *lastChangeDate = [NSCalendarDate dateWithString:latestModificationDate calendarFormat:@"%Y%m%d%H%M%S"];
 				[lastChangeDate setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
 				NSCalendarDate *localDate = [lastChangeDate addTimeInterval:[[NSTimeZone localTimeZone] secondsFromGMTForDate:lastChangeDate]];
@@ -80,7 +106,7 @@ Boolean GetMetadataForFile(void* thisInterface,
 	}
 	
 	[pool release];
-    return success;
+	return success;
 }
 
 
@@ -90,7 +116,7 @@ void DImp_ProcessInventoryFile(NSString *path, NSMutableString *log, NSMutableSe
 	{
 		NSString *inventory = [NSString stringWithContentsOfFile:path
 		                                                encoding:NSUTF8StringEncoding
-		                                                   error:nil];
+		                                                   error:NULL];
 		if (inventory)
 		{
 			BOOL authorIsNext = NO;
