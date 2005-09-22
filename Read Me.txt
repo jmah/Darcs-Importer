@@ -13,12 +13,14 @@ QUICKSTART AND INSTALLATION
 2. Run the shell script:
    make_importable.sh /path/to/my/_darcs
    This will make the repository appear as a bundle to the system, so it can be
-   associated with the Darcs importer.
-3. Run:
-   mdimport /path/to/my/_darcs
-   This will import all the information from the repository.
+   associated with the Darcs importer. It will then call mdimport on your
+   repository to import all the information into Spotlight. The first time this
+   is run it may take a few seconds. Rest assured, though, once broken in the
+   importer is quite fast -- it imports the current darcs-stable in about 0.15
+   seconds on my 1GHz iBook G4.
 
 Done!
+
 
 Unfortunately changes aren't currently picked up automatically. You can get
 around this by adding mdimport as a posthook to the record/pull/etc. commands.
